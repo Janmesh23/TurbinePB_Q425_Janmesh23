@@ -65,26 +65,6 @@ Token holders aren't just speculators. They get real utility:
 
 ---
 
-## The Architecture
-
-### How Everything Connects
-
-```
-                    VICTORY-VERSE PLATFORM
-                            |
-        ┌───────────────────┼───────────────────┐
-        |                   |                   |
-    EVENT LAYER        TOKEN LAYER         NFT LAYER
-        |                   |                   |
-   [Events]            [Fan Tokens]         [Trophies]
-   [Organizers]        [Staking]           [Achievements]
-   [Participants]      [Trading]           [Metadata]
-        |                   |                   |
-        └───────────────────┼───────────────────┘
-                            |
-                    SOLANA BLOCKCHAIN
-              (Fast, cheap, actually works)
-```
 
 ### The Programs (Smart Contracts)
 
@@ -202,14 +182,3 @@ This showcases what blockchain should do - create new economic models that aren'
 
 ---
 
-## The Bottom Line
-
-Victory-Verse turns achievements into assets and spectators into stakeholders. It's a new model for recognition, compensation, and community that actually makes sense in the digital age.
-
-No more "winner gets paid, everyone else forgets about it."
-
-Now it's "winner gets paid, fans get invested, organizers get sustainable revenue, and everyone's incentivized for long-term success."
-
-That's the future we're building.
-
----
