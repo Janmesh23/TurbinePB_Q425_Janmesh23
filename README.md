@@ -1,6 +1,6 @@
 # TurbinePB Q4 2025 - Janmesh23
 
-This repository contains my work for the Turbine Program Builder Q4 2025 cohort.
+This repository contains my work for the Turbine Program PreBuilder Q4 2025 cohort.
 
 ---
 
