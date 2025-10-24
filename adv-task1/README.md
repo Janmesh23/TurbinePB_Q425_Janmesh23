@@ -2,13 +2,6 @@
 
 A decentralized event rewards platform built on the Solana blockchain. This system replaces traditional cash prizes with tradable **Fan Tokens (SPL)** and unique **Trophy NFTs (Metaplex)**, creating a dynamic reward economy where a winner's prize value can grow with their fan engagement.
 
-This project is a port of an Ethereum/Solidity application, redesigned to leverage the high speed and low cost of the Solana network.
-
-## 🌟 Key Innovation
-* **Hyper-Economical:** Creating a unique token and NFT for *every single event* is financially impossible on Ethereum. On Solana, it costs fractions of a cent, unlocking the true potential of this "per-event" model.
-* **Instant Liquidity:** Fans can buy and sell Fan Tokens on Solana DEXs (like Jupiter or Raydium) the moment they are created.
-* **Native Compatibility:** By using Metaplex and SPL standards, all assets (Trophies and Tokens) are automatically viewable in wallets like Phantom and tradable on marketplaces like Magic Eden.
-
 ---
 
 ## 🏛️ Architectural Diagram
@@ -64,21 +57,3 @@ The entire application is powered by three core program instructions:
 
 ---
 
-## 💻 How to Run (Local Development)
-
-### Prerequisites
-* **Rust:** [https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
-* **Solana CLI:** [https://docs.solana.com/cli/install](https://docs.solana.com/cli/install)
-* **Anchor CLI:** `cargo install --git https://github.com/project-serum/anchor anchor-cli --locked`
-* **Node.js & Yarn:** [https://nodejs.org/en/](https://nodejs.org/en/)
-
-### 1. Setup the Project
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd victory-verse-solana
-
-# Install Node.js dependencies for the frontend
-cd app
-yarn install
-cd ..
