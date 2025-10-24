@@ -1,339 +1,192 @@
-# Victory-Verse Platform Architecture
+# Victory-Verse User Stories
 
-## System Flow Overview
-
-This document visualizes the complete user journey and technical architecture of Victory-Verse, from wallet connection to marketplace interactions.
-
----
-
-## 🎯 High-Level User Flow
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         USER ENTRY POINT                         │
-│                    https://victory-verse.io                      │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-                    ┌────────▼────────┐
-                    │  Landing Page   │
-                    │  (Public View)  │
-                    └────────┬────────┘
-                             │
-                    ┌────────▼─────────┐
-                    │ Connect Wallet?  │
-                    │ (Phantom/Solflare)│
-                    └────┬──────┬──────┘
-                         │      │
-                    NO   │      │   YES
-                         │      │
-          ┌──────────────┘      └──────────────┐
-          │                                    │
-    ┌─────▼──────┐                     ┌──────▼──────┐
-    │  Browse     │                     │  Wallet     │
-    │  Events     │                     │  Connected  │
-    │  (Read-Only)│                     │  Dashboard  │
-    └─────────────┘                     └──────┬──────┘
-                                               │
-                        ┌──────────────────────┼──────────────────────┐
-                        │                      │                      │
-                   ┌────▼────┐          ┌─────▼─────┐         ┌─────▼─────┐
-                   │  Event  │          │   Token   │         │   User    │
-                   │ Creator │          │ Marketplace│         │  Profile  │
-                   └─────────┘          └───────────┘         └───────────┘
-```
+## Overview
+User stories for Victory-Verse, organized by user type .
 
 ---
 
-## 🔐 Authentication Flow (Wallet Connection)
+## User Types
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                      WALLET CONNECTION FLOW                      │
-└─────────────────────────────────────────────────────────────────┘
-
-User Action                    Platform Response              Blockchain
-
-    │                                  │                           │
-    │  Click "Connect Wallet"          │                           │
-    ├─────────────────────────────────>│                           │
-    │                                  │                           │
-    │                                  │  Detect installed wallets  │
-    │                                  │  (Phantom, Solflare, etc) │
-    │                                  │                           │
-    │  <── Show wallet options ────────┤                           │
-    │                                  │                           │
-    │  Select Phantom                  │                           │
-    ├─────────────────────────────────>│                           │
-    │                                  │                           │
-    │                                  │  Trigger wallet popup     │
-    │  <── Wallet approval prompt ─────┤                           │
-    │                                  │                           │
-    │  Approve connection              │                           │
-    ├─────────────────────────────────>│                           │
-    │                                  │                           │
-    │                                  │   Verify signature        │
-    │                                  ├──────────────────────────>│
-    │                                  │                           │
-    │                                  │   <── Public key ─────────┤
-    │                                  │                           │
-    │                                  │  Create session token     │
-    │                                  │  Store wallet address     │
-    │                                  │  Fetch user data          │
-    │                                  │                           │
-    │  <── Show dashboard ─────────────┤                           │
-    │      - Wallet address            │                           │
-    │      - SOL balance               │                           │
-    │      - Token holdings            │                           │
-    │                                  │                           │
-
-┌─────────────────────────────────────────────────────────────────┐
-│                         SESSION ACTIVE                           │
-│  User is now authenticated and can access all platform features  │
-└─────────────────────────────────────────────────────────────────┘
-```
+1. **Event Organizer** - Creates and manages  events
+2. **Participant/Winner** - Competes in events and receives rewards
+3. **Fan/Token Holder** - Supports winners by purchasing and trading tokens
+4. **Visitor** - Exploring the platform without wallet connection
 
 ---
 
-## 🎪 User Dashboard - Main Navigation
+## Core User Stories
 
-```
-┌───────────────────────────────────────────────────────────────────────┐
-│                     VICTORY-VERSE MAIN DASHBOARD                       │
-├───────────────────────────────────────────────────────────────────────┤
-│  [Logo]  Victory-Verse           [Wallet: 7x4K...mPqZ]  [1.5 SOL] [▼] │
-├───────────────────────────────────────────────────────────────────────┤
-│                                                                        │
-│   ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐   │
-│   │   BROWSE   │  │   CREATE   │  │ PARTICIPATE │  │ MARKETPLACE│   │
-│   │   EVENTS   │  │   EVENT    │  │  IN EVENT  │  │            │   │
-│   └─────┬──────┘  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘   │
-│         │               │               │               │            │
-│         │               │               │               │            │
-│   View all active      Create new      Register for    Buy/Sell      │
-│   and upcoming        competitive      events and      event tokens  │
-│   events              event with       track status                  │
-│                       tokenized                                      │
-│                       prizes                                         │
-│                                                                        │
-├───────────────────────────────────────────────────────────────────────┤
-│                          QUICK STATS                                  │
-│   Active Events: 47    │   Total TVL: 1,234 SOL   │  My Tokens: 8   │
-└───────────────────────────────────────────────────────────────────────┘
-```
+### 1. Wallet Connection & Authentication
 
----
+#### Story A: Connect Wallet
+**As a** visitor  
+**When I** click the "Connect Wallet" button and approve the connection in my Solana wallet  
+**Then** I am logged into the platform and can see my wallet address displayed
 
-## 🏗️ Create Event Flow (Organizer Path)
+**Acceptance Criteria:**
+- Wallet connection supports Phantom, Solflare, and Backpack wallets
+- User sees a clear success message after connection
+- User's SOL balance is displayed
+- Navigation menu updates to show logged-in options
+- Session persists until user manually disconnects
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                       EVENT CREATION FLOW                        │
-└─────────────────────────────────────────────────────────────────┘
+#### Story B: Disconnect Wallet
+**As a** logged-in user  
+**When I** click "Disconnect Wallet" in the menu  
+**Then** I am logged out and returned to the visitor view
 
-Step 1: BASIC INFORMATION
-┌──────────────────────────────────┐
-│ Create New Event                 │
-├──────────────────────────────────┤
-│ Event Name: [________________]   │
-│ Category: [Gaming ▼]             │
-│ Description: [_____________]     │
-│            [_____________]       │
-│ Start Date: [MM/DD/YYYY]         │
-│ End Date: [MM/DD/YYYY]           │
-│ Upload Image: [Choose File]      │
-│                                  │
-│        [Next: Token Setup]       │
-└──────────────────────────────────┘
-              ↓
-              
-Step 2: TOKEN ECONOMICS
-┌──────────────────────────────────┐
-│ Configure Token Distribution     │
-├──────────────────────────────────┤
-│ Total Token Supply:              │
-│ [1,000,000] tokens               │
-│                                  │
-│ Winner Allocation: [30%]         │
-│ = 300,000 tokens                 │
-│                                  │
-│ Event Treasury: [20%]            │
-│ = 200,000 tokens                 │
-│                                  │
-│ Public Sale: [50%]               │
-│ = 500,000 tokens                 │
-│                                  │
-│ Token Symbol: [____]             │
-│ Initial Price: [0.01] SOL        │
-│                                  │
-│   [Back] [Next: Participants]    │
-└──────────────────────────────────┘
-              ↓
-              
-Step 3: PARTICIPANT MANAGEMENT
-┌──────────────────────────────────┐
-│ Add Participants                 │
-├──────────────────────────────────┤
-│ Add wallet addresses:            │
-│ [__________________________]     │
-│              [Add]               │
-│                                  │
-│ Or import CSV: [Upload File]     │
-│                                  │
-│ Registered Participants (5):     │
-│ • 7x4K...mPqZ (Alice)           │
-│ • 9bNm...kLpW (Bob)             │
-│ • 2cXt...jRsM (Charlie)         │
-│ • 5vWq...hTnP (Diana)           │
-│ • 8pKj...fGhL (Eve)             │
-│                                  │
-│ Max Participants: [50]           │
-│                                  │
-│   [Back] [Next: Review]          │
-└──────────────────────────────────┘
-              ↓
-              
-Step 4: REVIEW & DEPLOY
-┌──────────────────────────────────┐
-│ Review Event Details             │
-├──────────────────────────────────┤
-│ Event: "Summer Gaming Showdown"  │
-│ Category: Gaming                 │
-│ Dates: Aug 1-15, 2025           │
-│                                  │
-│ Token: SUMMER (1M supply)        │
-│ Winner: 300K | Treasury: 200K    │
-│ Public: 500K @ 0.01 SOL          │
-│                                  │
-│ Participants: 5 registered       │
-│                                  │
-│ ⚠️ Creation Fee: 1 SOL           │
-│                                  │
-│ [Edit] [Create Event on Chain]   │
-└──────────────────────────────────┘
-              ↓
-              
-     BLOCKCHAIN TRANSACTION
-┌──────────────────────────────────┐
-│ Confirm in your wallet...        │
-│                                  │
-│ [Waiting for approval...]        │
-│                                  │
-│ ⚙️ Creating event...             │
-│ ⚙️ Minting tokens...             │
-│ ⚙️ Setting up vault...           │
-│                                  │
-└──────────────────────────────────┘
-              ↓
-              
-        SUCCESS!
-┌──────────────────────────────────┐
-│ ✅ Event Created Successfully!   │
-├──────────────────────────────────┤
-│ Event ID: #EVT-1234              │
-│ Token Mint: 5KpQ...xMnL          │
-│ Vault Address: 9bTc...wRpK       │
-│                                  │
-│ Your event is now live!          │
-│                                  │
-│ [View Event] [Manage Event]      │
-└──────────────────────────────────┘
-```
+**Acceptance Criteria:**
+- All personal data is cleared from the interface
+- User is redirected to the home page
+- A confirmation message appears before disconnecting
+- User must reconnect wallet to access protected features
 
 ---
 
-## 🏆 Event Management & Winner Declaration
+### 2. Event Organizer Stories
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    EVENT MANAGEMENT DASHBOARD                    │
-└─────────────────────────────────────────────────────────────────┘
+#### Story A: Create New Event
+**As an** event organizer  
+**When I** navigate to "Create Event" and fill in the event details (name, description, dates, prize structure)  
+**Then** a new event is created on the blockchain with a unique token
 
-ORGANIZER VIEW - "Summer Gaming Showdown"
-┌──────────────────────────────────────────────────────────────────┐
-│ [Event Image]                                                     │
-│                          Summer Gaming Showdown                   │
-│                          Status: ACTIVE 🟢                        │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  PARTICIPANTS (5)              TOKEN INFO                         │
-│  ├─ Alice (7x4K...mPqZ)       Total Supply: 1M SUMMER           │
-│  ├─ Bob (9bNm...kLpW)         Distributed: 0                     │
-│  ├─ Charlie (2cXt...jRsM)     Available: 1M                      │
-│  ├─ Diana (5vWq...hTnP)       Price: 0.01 SOL                    │
-│  └─ Eve (8pKj...fGhL)                                            │
-│                                                                   │
-│  [Add Participant] [Remove]    ANALYTICS                         │
-│                                Page Views: 1,247                  │
-│  WINNER SELECTION             Interested Users: 89               │
-│  Select Winner: [Choose ▼]    Social Shares: 34                  │
-│                                                                   │
-│          [Declare Winner]                                         │
-│                                                                   │
-└──────────────────────────────────────────────────────────────────┘
+**Acceptance Criteria:**
+- Form includes: event name, description, start/end dates, image upload
+- Token economics configuration: total supply, winner %, treasury %, public sale %
+- Event creation fee (1 SOL) is clearly displayed and deducted
+- Confirmation screen shows all details before submitting to blockchain
+- Event appears in "My Events" dashboard immediately after creation
+- Unique event ID and token mint address are generated
+- Event status is set to "Registration"
 
-              ↓ (Organizer selects Alice and clicks Declare Winner)
+#### Story B: Register Participants
+**As an** event organizer  
+**When I** add participant wallet addresses to my event  
+**Then** those participants are registered and can compete
 
-┌──────────────────────────────────────────────────────────────────┐
-│ Confirm Winner Declaration                                        │
-├──────────────────────────────────────────────────────────────────┤
-│ You are about to declare Alice as the winner                     │
-│                                                                   │
-│ This will trigger:                                                │
-│ ✓ Transfer 300,000 SUMMER tokens to Alice                       │
-│ ✓ Transfer 200,000 SUMMER to event treasury                     │
-│ ✓ Mint NFT trophy to Alice's wallet                             │
-│ ✓ Make 500,000 SUMMER available for public purchase             │
-│ ✓ Change event status to COMPLETED                              │
-│                                                                   │
-│ ⚠️ This action cannot be undone!                                 │
-│                                                                   │
-│            [Cancel] [Confirm & Execute]                          │
-└──────────────────────────────────────────────────────────────────┘
+**Acceptance Criteria:**
+- Can add participants individually or bulk import via CSV
+- Each participant wallet is validated before adding
+- Maximum participant limit is enforced (if set)
+- Participants receive notification of registration
+- Can remove participants before event starts
+- Cannot modify participant list after event status changes to "Active"
 
-              ↓ (Smart contract execution)
+#### Story C: Declare Winner
+**As an** event organizer  
+**When I** select a winner from the registered participants and click "Declare Winner"  
+**Then** tokens are automatically distributed and an NFT trophy is minted
 
-SMART CONTRACT EXECUTION
-┌──────────────────────────────────────────────────────────────────┐
-│ Processing...                                                     │
-│                                                                   │
-│ ✅ Token distribution to winner (300K)                           │
-│ ✅ Token distribution to treasury (200K)                         │
-│ ✅ NFT trophy minted (Token ID: #TROPHY-1234)                    │
-│ ✅ Public sale activated (500K available)                        │
-│ ✅ Event status updated to COMPLETED                             │
-│                                                                   │
-│ Transaction: https://solscan.io/tx/5xKm...pQwR                   │
-│                                                                   │
-│                    [View Event Page]                             │
-└──────────────────────────────────────────────────────────────────┘
+**Acceptance Criteria:**
+- Can only declare winner from registered participants
+- Confirmation dialog shows token distribution breakdown
+- Winner receives their token allocation (e.g., 30% of total supply)
+- Winner automatically receives NFT trophy in their wallet
+- Event treasury receives allocated tokens (e.g., 20%)
+- Remaining tokens move to "Available for Public Sale"
+- Event status changes to "Completed"
+- Winner announcement is visible on event page
+- Transaction hash is displayed for verification
 
-COMPLETED EVENT VIEW
-┌──────────────────────────────────────────────────────────────────┐
-│ Summer Gaming Showdown - COMPLETED 🏆                            │
-├──────────────────────────────────────────────────────────────────┤
-│ Winner: Alice (7x4K...mPqZ)                                      │
-│ Prize: 300,000 SUMMER tokens                                     │
-│                                                                   │
-│ [Trophy NFT Preview]          TOKEN NOW LIVE                     │
-│                               Current Price: 0.012 SOL (+20%)    │
-│                               24h Volume: 45 SOL                 │
-│                               Holders: 23                        │
-│                                                                   │
-│                               [Buy SUMMER Tokens]                │
-└──────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
-## 🛒 Marketplace Flow (Fan/Token Holder Path)
+### 3. Participant/Winner Stories
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     TOKEN MARKETPLACE HOME                       │
-└─────────────────────────────────────────────────────────────────┘
+#### Story A: View Available Events
+**As a** participant  
+**When I** navigate to the "Events" page  
+**Then** I see all active and upcoming events I can participate in
 
-┌──────────────────────────────────────────────────────────────────┐
-│ Marketplace                                    [Search: _______] │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│ Filters: [All Events ▼] [All Categories
+**Acceptance Criteria:**
+- Each event shows: name, image, dates, prize structure, participant count
+- Can filter by: status (registration/active/completed), category, date
+- Can search by event name or organizer
+- Past events show winner information
+
+#### Story B: Participate in Event
+**As a** registered participant  
+**When I** compete in an event and am declared the winner  
+**Then** I receive my token allocation and NFT trophy in my wallet
+
+**Acceptance Criteria:**
+- Tokens appear in wallet within 30 seconds of winner declaration
+- NFT trophy appears in wallet's NFT collection
+- Winner badge/indicator appears on user profile
+- Notification confirms successful token transfer
+- Token amount matches the promised allocation percentage
+- Tokens have initial lock period clearly displayed (e.g., "30 days until tradeable")
+
+#### Story C: View My Achievements
+**As a** winner  
+**When I** navigate to "My Achievements"  
+**Then** I see all events I've won and my trophy NFTs
+
+**Acceptance Criteria:**
+- All won events are listed with dates and prize amounts
+- Trophy NFTs are displayed with artwork and metadata
+- Shows current value of tokens received
+- Shows trading volume of event tokens
+- Can share achievements on social media
+- Trophy gallery is publicly viewable via profile link
+
+---
+
+### 4. Fan/Token Holder Stories
+
+#### Story A: Browse Event Tokens
+**As a** fan  
+**When I** visit the "Marketplace" page  
+**Then** I see all available event tokens I can purchase
+
+**Acceptance Criteria:**
+- Tokens are displayed with: event name, winner name, current price, 24h change
+- Can sort by: newest, price, volume, market cap
+- Can filter by: event category, date range
+- Each token shows available supply for purchase
+- Clicking a token shows detailed page with price chart and event history
+
+#### Story B: Buy Event Tokens
+**As a** fan  
+**When I** select an event token and specify the amount to buy  
+**Then** tokens are transferred to my wallet after payment
+
+**Acceptance Criteria:**
+- Clear display of: token price, amount to buy, total cost in SOL
+- Transaction fee estimate is shown before confirmation
+- Must confirm transaction in wallet
+- Tokens appear in wallet within 30 seconds
+- Purchase is recorded in transaction history
+- Remaining available supply updates immediately
+- Cannot buy more than available supply
+
+#### Story C: Sell Event Tokens
+**As a** token holder  
+**When I** list my tokens for sale in the marketplace  
+**Then** other users can purchase them at my set price
+
+**Acceptance Criteria:**
+- Can set custom price per token
+- Can choose to sell partial or full holdings
+- Listing appears immediately in marketplace
+- Can cancel listing at any time before sale
+- Tokens are locked while listed (cannot be transferred elsewhere)
+- Receive SOL payment automatically when tokens are purchased
+- 2.5% trading fee is deducted and clearly displayed
+
+#### Story D: Stake Tokens
+**As a** token holder  
+**When I** stake my event tokens with a lock period  
+**Then** I earn staking rewards over time
+
+**Acceptance Criteria:**
+- Can choose lock period: 30 days, 90 days, 180 days, 365 days
+- APY (annual percentage yield) is clearly displayed for each option
+- Shows estimated rewards at end of lock period
+- Confirmation dialog explains tokens will be locked and untradeable
+- Staked amount appears in "My Staking" dashboard
+- Shows countdown timer until unlock date
+- Rewards accumulate and are claimable daily
+- Can unstake after lock period ends
+- Early unstaking option available with penalty clearly shown
+
